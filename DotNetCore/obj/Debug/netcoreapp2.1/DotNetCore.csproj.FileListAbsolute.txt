@@ -5,7 +5,6 @@ D:\Biraj\DotNetCore\DotNetCore\bin\Debug\netcoreapp2.1\DotNetCore.dll
 D:\Biraj\DotNetCore\DotNetCore\bin\Debug\netcoreapp2.1\DotNetCore.pdb
 D:\Biraj\DotNetCore\DotNetCore\bin\Debug\netcoreapp2.1\DotNetCore.Views.dll
 D:\Biraj\DotNetCore\DotNetCore\bin\Debug\netcoreapp2.1\DotNetCore.Views.pdb
-D:\Biraj\DotNetCore\DotNetCore\obj\Debug\netcoreapp2.1\DotNetCore.csprojAssemblyReference.cache
 D:\Biraj\DotNetCore\DotNetCore\obj\Debug\netcoreapp2.1\DotNetCore.csproj.CoreCompileInputs.cache
 D:\Biraj\DotNetCore\DotNetCore\obj\Debug\netcoreapp2.1\DotNetCore.RazorAssemblyInfo.cache
 D:\Biraj\DotNetCore\DotNetCore\obj\Debug\netcoreapp2.1\DotNetCore.RazorAssemblyInfo.cs
@@ -40,3 +39,6 @@ D:\Biraj\DotNetCore\DotNetCore\obj\Debug\netcoreapp2.1\DotNetCore.Views.pdb
 D:\Biraj\DotNetCore\DotNetCore\obj\Debug\netcoreapp2.1\DotNetCore.dll
 D:\Biraj\DotNetCore\DotNetCore\obj\Debug\netcoreapp2.1\DotNetCore.pdb
 D:\Biraj\DotNetCore\DotNetCore\obj\Debug\netcoreapp2.1\DotNetCore.csproj.CopyComplete
+D:\Biraj\DotNetCore\DotNetCore\obj\Debug\netcoreapp2.1\DotNetCore.csprojAssemblyReference.cache
+D:\Biraj\DotNetCore\DotNetCore\obj\Debug\netcoreapp2.1\Razor\Views\Users\Index.g.cshtml.cs
+D:\Biraj\DotNetCore\DotNetCore\obj\Debug\netcoreapp2.1\Razor\Views\Users\Edit.g.cshtml.cs

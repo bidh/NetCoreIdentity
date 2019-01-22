@@ -1,0 +1,34 @@
+﻿@model List<UserViewModel>
+@{
+    ViewData["Title"] = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Settings</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Enabled</th>
+            <th>Valid From</th>
+            <th>Valid Till</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var model in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem=>model.UserName)</td>
+                <td>@Html.DisplayFor(modelItem=>model.Enabled)</td>
+                <td>@Html.DisplayFor(modelItem=>model.From)</td>
+                <td>@Html.DisplayFor(modelItem=>model.To)</td>
+                <td>
+                    @Html.ActionLink("Edit","Edit",new { id = model.Id })|
+                    @Html.ActionLink("Delete", "Delete", new { id = model.Id})
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
