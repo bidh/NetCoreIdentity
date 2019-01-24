@@ -22,33 +22,55 @@ namespace DotNetCore.Controllers
             _signInManager = signInManager;
         }   
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var roles = _context.Roles.Where(x => x.Name == "Admin").Select(x => x.Id).FirstOrDefault();
-            var userRoles = _context.UserRoles.Where(x => x.RoleId != roles).ToList();
-
-            //var users = _context.Users.Where(x => x.Id == userRoles.First()).ToList();
-            var users = _context.Users.Where(item => userRoles.Any(u => u.UserId.Equals(item.Id))).ToList();
-             
-            var usersViewModel = users.Select(user => new UserViewModel()
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Enabled = user.Enabled,
-                From = user.FromDate,
-                To = user.ToDate
-            })            
-            .ToList();
-            return View(usersViewModel);
+            //var roles = _context.Roles.Where(x => x.Name == "Admin").Select(x => x.Id).FirstOrDefault();
+            //var userRoles = _context.UserRoles.Where(x => x.RoleId != roles).ToList();
+            //var users = _context.Users.Where(item => userRoles.Any(u => u.UserId.Equals(item.Id))).ToList();
+            //var usersViewModel = users.Select(user => new UserViewModel()
+            //{
+            //    Id = user.Id,
+            //    UserName = user.UserName,
+            //    Enabled = user.Enabled,
+            //    From = user.FromDate,
+            //    To = user.ToDate
+            //})            
+            //.ToList();
+            //var result = _context.Users.Join(_context.UserRoles, u => u.Id, ur => ur.UserId,
+            //                            (u, ur) => new { u, ur })
+            //                            .Join(_context.Roles, r => r.ur.RoleId, ro => ro.Id, (r, ro) => new { r, ro })
+            //                            .Where(m => m.r.u.UserName == "dp@sensus.dk")
+            //                            .Select(m => new UserViewModel
+            //                            {
+            //                                UserName=m.r.u.UserName,
+            //                                Enabled=m.r.u.Enabled,
+            //                                From=m.r.u.FromDate,
+            //                                To=m.r.u.ToDate
+            //                            }).ToList();
+            var users =await _context.Roles.Join(_context.UserRoles, r => r.Id, ur => ur.RoleId,
+                                            (r, ur) => new { r, ur })
+                                            .Join(_context.Users, a => a.ur.UserId, u => u.Id, (a, u) => new { a, u })
+                                            .Where(m => m.a.r.Name != "Admin")
+                                            .Select(m => new UserViewModel
+                                            {
+                                                Id=m.u.Id,
+                                                UserName=m.u.UserName,
+                                                Enabled=m.u.Enabled,
+                                                From=m.u.FromDate,
+                                                To=m.u.ToDate
+                                            }).ToListAsync();            
+            
+            return View(users);
         }
         [HttpGet]
-        public ActionResult Edit(string id)
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit(string id)
         {
             if (id == null)
             {
                 return BadRequest();
             }
-            var user = _context.Users.SingleOrDefault(x => x.Id == id);
+            var user =await _context.Users.SingleOrDefaultAsync(x => x.Id == id);
             if (user != null)
             {
                 var usersViewModel = new UserViewModel
@@ -68,7 +90,7 @@ namespace DotNetCore.Controllers
         /// </summary>        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(UserViewModel userViewModel)
+        public async Task<ActionResult> Edit(UserViewModel userViewModel)
         {
             DotNetCoreUser user = _context.Users.SingleOrDefault(x => x.Id == userViewModel.Id);
             if (user == null)
@@ -81,10 +103,16 @@ namespace DotNetCore.Controllers
                 user.Enabled = userViewModel.Enabled;
                 user.FromDate = userViewModel.From;
                 user.ToDate = userViewModel.To;
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(userViewModel);
         }
+        //[HttpGet]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> Delete(string id)
+        //{
+
+        //}
     }
 }
