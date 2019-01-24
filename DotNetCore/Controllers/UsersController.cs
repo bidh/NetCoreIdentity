@@ -51,6 +51,7 @@ namespace DotNetCore.Controllers
                                             (r, ur) => new { r, ur })
                                             .Join(_context.Users, a => a.ur.UserId, u => u.Id, (a, u) => new { a, u })
                                             .Where(m => m.a.r.Name != "Admin")
+                                            .AsNoTracking()
                                             .Select(m => new UserViewModel
                                             {
                                                 Id=m.u.Id,
@@ -63,14 +64,13 @@ namespace DotNetCore.Controllers
             return View(users);
         }
         [HttpGet]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(string id)
         {
             if (id == null)
             {
                 return BadRequest();
             }
-            var user =await _context.Users.SingleOrDefaultAsync(x => x.Id == id);
+            var user =await _context.Users.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
             if (user != null)
             {
                 var usersViewModel = new UserViewModel
@@ -86,8 +86,10 @@ namespace DotNetCore.Controllers
             return RedirectToAction("Index");
         }
         /// <summary>
-        /// edit method for editing the user
-        /// </summary>        
+        /// Edit the user
+        /// </summary>
+        /// <param name="userViewModel">Pass UserViewModel for POST</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(UserViewModel userViewModel)
@@ -99,20 +101,80 @@ namespace DotNetCore.Controllers
             }
             if (ModelState.IsValid)
             {
-                user.UserName = userViewModel.UserName;
-                user.Enabled = userViewModel.Enabled;
-                user.FromDate = userViewModel.From;
-                user.ToDate = userViewModel.To;
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
+                try
+                {
+                    user.UserName = userViewModel.UserName;
+                    user.Enabled = userViewModel.Enabled;
+                    user.FromDate = userViewModel.From;
+                    user.ToDate = userViewModel.To;
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError("", "Unable to save changes. " +
+                        "Try again, and if the problem persists, " +
+                        "see your system administrator.");
+                }
             }
             return View(userViewModel);
         }
-        //[HttpGet]
-        //[ValidateAntiForgeryToken]
-        //public async Task<ActionResult> Delete(string id)
-        //{
+        /// <summary>
+        /// Delete the user
+        /// </summary>
+        /// <param name="id">Id of the user.</param>
+        /// <param name="saveChangesError">To throw the error in exception.</param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ActionResult> Delete(string id, bool? saveChangesError = false)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var user = await _context.Users
+                .AsNoTracking()
+                .SingleOrDefaultAsync(x => x.Id == id);
 
-        //}
+            if (user != null)
+            {
+                var usersViewModel = new UserViewModel
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Enabled = user.Enabled,
+                    From = user.FromDate,
+                    To = user.ToDate
+                };
+                return View(usersViewModel);
+            }
+            if (saveChangesError.GetValueOrDefault())
+            {
+                ViewData["ErrorMessage"] =
+                    "Delete failed. Try again, and if the problem persists " +
+                    "see your system administrator.";
+            }
+            return RedirectToAction(nameof(Index));
+        }
+        /// <summary>
+        /// Delete the user
+        /// </summary>
+        /// <param name="user">Pass the user to delete.</param>
+        /// <returns></returns>
+        [HttpPost, ActionName("Delete")]
+        public async Task<ActionResult> DeleteConfirmed(UserViewModel user)
+        {
+            try
+            {
+                var userToDelete = await _context.Users.SingleOrDefaultAsync(x => x.Id == user.Id);
+                _context.Entry(userToDelete).State = EntityState.Deleted;
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                return RedirectToAction(nameof(Delete), new { id=user.Id, saveChangesError = true });
+            }           
+        }
     }
 }

@@ -87,6 +87,7 @@ namespace DotNetCore.Areas.Identity.Pages.Account
                 }
                 catch(Exception ex)
                 {
+                    ViewData["Message"] = "Invalid login attempt.";
                     _logger.LogInformation("Something went wrong.Contact the service provider.");
                     return Page();
                 }
@@ -104,6 +105,7 @@ namespace DotNetCore.Areas.Identity.Pages.Account
                         }
                         else
                         {
+                            ViewData["Message"] = "The validity has expired. Please contact the Admin.";
                             _logger.LogInformation("The validity has expired.");
                             return Page();
                             //return RedirectToPage("/Index");
@@ -111,7 +113,8 @@ namespace DotNetCore.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        _logger.LogInformation("User in not enabled. Please contact the admin.");
+                        ViewData["Message"] = "User in not enabled. Please contact the Admin.";
+                        _logger.LogInformation("User in not enabled. Please contact the Admin.");
                         return Page();
                         //return RedirectToPage("/Index");
                     }
@@ -131,12 +134,11 @@ namespace DotNetCore.Areas.Identity.Pages.Account
                     return RedirectToPage("./Lockout");
                 }
                 else
-                {
+                {                    
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                     return Page();
                 }
-            }
-
+            }            
             // If we got this far, something failed, redisplay form
             return Page();
             //return RedirectToPage("/Index");

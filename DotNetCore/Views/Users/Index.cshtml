@@ -25,8 +25,8 @@
                 <td>@Html.DisplayFor(modelItem=>model.From)</td>
                 <td>@Html.DisplayFor(modelItem=>model.To)</td>
                 <td>
-                    @Html.ActionLink("Edit","Edit",new { id = model.Id })|
-                    @Html.ActionLink("Delete", "Delete", new { id = model.Id})
+                    @Html.ActionLink("Edit", "Edit", new { id = model.Id }, new { @class = "btn btn-primary"})
+                    @Html.ActionLink("Delete", "Delete", new { id = model.Id }, new { @class = "btn btn-danger"})
                 </td>
             </tr>
         }
